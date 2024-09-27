@@ -55,12 +55,20 @@ class FontApi {
 
     private function createFont() {
         $data = json_decode(file_get_contents("php://input"));
-        if(!empty($data->name) && !empty($data->path)) {
+        
+        // Validate input data
+        if (!empty($data->name) && !empty($data->path) && !empty($data->size)) {
+            // Assign values to the font object
             $this->font->name = $data->name;
             $this->font->path = $data->path;
-            if($this->font->create()) {
+            $this->font->size = $data->size;
+
+            // Call the create method
+            $fontRecord = $this->font->create();
+            
+            if ($fontRecord) {
                 http_response_code(201);
-                echo json_encode(['message' => 'Font created']);
+                echo json_encode( $fontRecord);
             } else {
                 http_response_code(503);
                 echo json_encode(['message' => 'Unable to create font']);
@@ -70,6 +78,7 @@ class FontApi {
             echo json_encode(['message' => 'Incomplete data']);
         }
     }
+
 
     private function deleteFont($id) {
         if($id) {

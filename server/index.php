@@ -15,7 +15,7 @@ require_once 'api/fonts.php';
 require_once 'api/fontgroups.php';
 
 // Welcome message for base or fontgroups URI
-if ($_SERVER['REQUEST_URI'] == '/' || $_SERVER['REQUEST_URI'] == '/fontgroups/') {
+if ($_SERVER['REQUEST_URI'] == '/' || $_SERVER['REQUEST_URI'] == '/font-groups/server/') {
     header('Content-Type: application/json');
     echo json_encode([
         'message' => 'Welcome to the Font Group System API'
@@ -67,19 +67,19 @@ function handleFileUpload() {
     }
 
     // Define allowed file types
-    $allowedTypes = ['ttf', 'jpg', 'jpeg', 'png', 'gif'];
-    // $uploadDir = __DIR__ . '/public/uploads/';
+    $allowedTypes = ['ttf', 'png'];
     $uploadDir = 'public/uploads/';
 
     // Get the uploaded file information
-    $fileName = basename($_FILES['file']['name']);
+    $originalFileName = basename($_FILES['file']['name']);
     $fileTmpPath = $_FILES['file']['tmp_name'];
-    $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+    $fileType = strtolower(pathinfo($originalFileName, PATHINFO_EXTENSION));
+    $fileSize = $_FILES['file']['size'];
 
     // Check if the file type is allowed
     if (!in_array($fileType, $allowedTypes)) {
         http_response_code(400);
-        echo json_encode(["message" => "Invalid file type. Only TTF, JPG, JPEG, PNG, and GIF are allowed."]);
+        echo json_encode(["message" => "Invalid file type. Only TTF are allowed."]);
         return;
     }
 
@@ -90,18 +90,26 @@ function handleFileUpload() {
         return;
     }
 
-    // Generate a unique name 
+    // Generate a unique name for the file to avoid overwriting
     $newFileName = uniqid() . '.' . $fileType;
     $filePath = $uploadDir . $newFileName;
 
     // Move the uploaded file to the 'uploads' directory
     if (move_uploaded_file($fileTmpPath, $filePath)) {
-        // Return the file URL
-        $fileUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/fontgroups/' . $filePath;
+        $fileUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/font-groups/server/' . $filePath;
         http_response_code(200);
-        echo json_encode(value: [
+        $data = [
+            "fileUrl" => $fileUrl,
+            "originalFileName" => $originalFileName,
+            "newFileName" => $newFileName,
+            "fileSize" => $fileSize
+        ];
+
+        http_response_code(200);
+
+        echo json_encode([
             "message" => "File uploaded successfully.",
-            "fileUrl" => $fileUrl
+            "data" => $data
         ]);
     } else {
         http_response_code(500);
