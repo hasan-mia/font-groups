@@ -90,11 +90,11 @@ function handleFileUpload() {
         return;
     }
 
-    // Generate a unique name for the file to avoid overwriting
+    // Generate a unique name
     $newFileName = uniqid() . '.' . $fileType;
     $filePath = $uploadDir . $newFileName;
 
-    // Move the uploaded file to the 'uploads' directory
+    // Move the uploaded file to the uploads
     if (move_uploaded_file($fileTmpPath, $filePath)) {
         $fileUrl = 'http://' . $_SERVER['HTTP_HOST'] . '/font-groups/server/' . $filePath;
         http_response_code(200);

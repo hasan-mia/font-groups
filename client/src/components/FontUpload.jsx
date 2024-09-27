@@ -33,18 +33,21 @@ const FontUpload = () => {
     };
 
     return (
-        <div className='p-2'>
-             <div className="upload-box w-full mx-auto p-4 rounded-sm border-dashed border-2 border-gray-400 text-center cursor-pointer">
-            <Dragger {...props} className="bg-white hover:bg-gray-100">
-                <p className="ant-upload-drag-icon flex justify-center">
-                    <IoCloudUploadOutline className="text-gray-600" size={40}/>
-                </p>
-                <p className="text-lg font-semibold">Click or drag file to this area to upload</p>
-                <p className="text-sm">Only .ttf files allowed</p>
-            </Dragger>
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+        <div className='flex justify-center'>
+            <div className='p-2 w-full lg:w-8/12'>
+                <div className="upload-box w-full mx-auto rounded-sm border-dashed border-2 border-gray-400 text-center cursor-pointer">
+                    <Dragger {...props} className="bg-white hover:bg-gray-100">
+                        <p className="ant-upload-drag-icon flex justify-center">
+                            <IoCloudUploadOutline className="text-gray-600" size={40}/>
+                        </p>
+                        <p className="text-lg font-semibold">Click or drag file to this area to upload</p>
+                        <p className="text-sm">Only .ttf files allowed</p>
+                    </Dragger>
+                    {error && <p className="text-red-500 mt-2">{error}</p>}
+                </div>
+            </div>
         </div>
-        </div>
+        
     );
 };
 

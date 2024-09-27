@@ -3,14 +3,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php/$1 [L]
 
-# <Directory "C:/xampp/htdocs/fontgroups/public/uploads">
-#     Options Indexes FollowSymLinks
-#     AllowOverride All
-#     Require all granted
-# </Directory>
-
-# Disable PHP execution inside uploads folder for security
-# <FilesMatch "\.(php|phtml|phar)$">
-#     Order Deny,Allow
-#     Deny from all
-# </FilesMatch>
+<FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
+    Header set Access-Control-Allow-Origin "*"
+</FilesMatch>

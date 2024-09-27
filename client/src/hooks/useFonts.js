@@ -11,6 +11,8 @@ export function useFonts () {
 
     const { data: fonts, isPending, refetch } = useCallApi(`${process.env.REACT_APP_API_URL}/fonts?page=${currentPage}&per_page=${encodeURIComponent(limit)}`, 'fonts');
 
+    const { data: fontList } = useCallApi(`${process.env.REACT_APP_API_URL}/fonts`, 'fontList');
+
     // Use mutation
     const addFontMutation = useMutation(
         createJsonMutationConfig(queryClient, 'fonts')
@@ -84,5 +86,6 @@ export function useFonts () {
         setLimit,
         handleAddFont,
         handleDelete,
+        fontList: fontList?.data,
     };
 }

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCallApi } from './useCallApi';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteMutationConfig } from '../config/api';
+import { createJsonMutationConfig, deleteMutationConfig } from '../config/api';
 import { errorMsg, successMsg } from '../utils/alert';
 
 export function useFontGroups () {
@@ -10,6 +10,25 @@ export function useFontGroups () {
     const [limit, setLimit] = useState(5);
 
     const { data: fontGroups, isPending, refetch } = useCallApi(`${process.env.REACT_APP_API_URL}/fontgroups?page=${currentPage}&per_page=${encodeURIComponent(limit)}`, 'fontGroups');
+
+      const addFontMutation = useMutation(
+        createJsonMutationConfig(queryClient, 'fontGroups')
+    );
+    
+    // Handle add font group
+    const handleAddFontGroup = async (data) => {
+        try {
+            await addFontMutation.mutateAsync({
+                url: `${process.env.REACT_APP_API_URL}/fontgroups`,
+                data: data,
+            });
+            successMsg('Success!', 'Font Group added successfully!');
+            queryClient.invalidateQueries(['fontGroups']);
+        } catch (error) {
+            console.error('Error adding font:', error);
+            errorMsg('Error!', 'Failed to add font.');
+        }
+    };
 
     // ==========Handle Delete========
     const deleteMutation = useMutation(
@@ -56,6 +75,7 @@ export function useFontGroups () {
       handlePageChange,
       limit,
       setLimit,
+      handleAddFontGroup,
       handleDelete,
     };
 }

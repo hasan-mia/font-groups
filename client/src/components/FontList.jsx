@@ -3,6 +3,7 @@ import { Button, Skeleton } from 'antd';
 import { IoTrashBinOutline } from 'react-icons/io5';
 import AntTable from './table/AntTable';
 import { useFonts } from '../hooks/useFonts';
+import { useFontLoader } from '../hooks/useFontLoader';
 
 const FontList = () => {
     const {
@@ -23,6 +24,22 @@ const FontList = () => {
         </div>
         );
     }
+
+    const FontPreview = ({ record }) => {
+        const fontFamily = `custom-font-${record.id}`;
+        const fontLoaded = useFontLoader(record.path, fontFamily);
+
+        if (!fontLoaded) {
+            return <span>Loading font...</span>;
+        }
+
+        return (
+            <span style={{ fontFamily, fontSize: '16px' }}>
+                My Bangladesh
+            </span>
+        );
+    };
+
     const columns = [
         {
             title: 'Font Name',
@@ -31,28 +48,9 @@ const FontList = () => {
             render: (text) => <span style={{ fontFamily: text }}>{text}</span>,
         },
         {
-            title: 'Font Style',
+            title: 'Preview',
             key: 'fontStyle',
-            render: (value, record) => {
-                // Create a unique font family name based on the font ID
-                const fontFamily = `custom-font-${record.id}`;
-                
-                // Dynamically add a @font-face rule
-                const fontFace = new FontFace(
-                    fontFamily,
-                    `url(${record.path})`
-                );
-
-                // Load the font and add it to the document
-                fontFace.load().then((loadedFont) => {
-                    document.fonts.add(loadedFont);
-                }).catch((error) => {
-                    console.error('Failed to load font:', error);
-                });
-
-                // Apply the custom font to the "My Bangladesh" text
-                return <span style={{ fontFamily }}>My Bangladesh</span>;
-            },
+            render: (_, record) => <FontPreview record={record} />,
         },
         {
             title: 'Delete',
@@ -69,7 +67,6 @@ const FontList = () => {
         },
     ];
 
-    console.log(fonts.data)
 
     return (
         <div className="text-lg p-2">
