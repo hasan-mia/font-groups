@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
+import { useFonts } from '../hooks/useFonts';
 
-const FontGroup = ({ fonts, addFontGroup }) => {
+const FontGroup = () => {
+    const {fonts} = useFonts();
     const [groupTitle, setGroupTitle] = useState('');
     const [selectedFonts, setSelectedFonts] = useState([]);
-
-    if (!Array.isArray(fonts)) {
-        console.error("Expected 'fonts' to be an array, but got:", fonts);
-        return null; 
-    }
 
     const handleFontSelect = (event) => {
         const { value, checked } = event.target;
@@ -29,10 +26,10 @@ const FontGroup = ({ fonts, addFontGroup }) => {
                 body: JSON.stringify(fontGroup),
             });
             console.log(response)
-            const result = await response.json();
-            if (result.success) {
-                addFontGroup(result?.group);
-            }
+            // const result = await response.json();
+            // if (result.success) {
+            //     addFontGroup(result?.group);
+            // }
         } catch (error) {
             console.error('Error creating font group:', error);
         }

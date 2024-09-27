@@ -1,13 +1,29 @@
 import React from 'react';
-import { Table } from 'antd';
+import { Button, Skeleton } from 'antd';
+import { useFontGroups } from '../hooks/useFontGroups';
+import AntTable from './table/AntTable';
+import { IoTrashBinOutline } from 'react-icons/io5';
 
-const FontGroupList = ({ fontGroups }) => {
-    if (!Array.isArray(fontGroups)) {
-        console.error("Expected 'fontGroups' to be an array, but got:", fontGroups);
-        return null; 
+const FontGroupList = () => {
+    const {
+        fontGroups, 
+        isPending,
+        currentPage,
+        handlePageChange,
+        setLimit,
+        setCurrentPage,
+        handleDelete,
+    } = useFontGroups();
+
+    if (isPending) {
+        return (
+        <div className="bg-gray-100 border rounded py-5 px-2">
+            <Skeleton active />
+            <Skeleton active className="mt-4" />
+        </div>
+        );
     }
-
-    // Define the columns for the table
+ 
     const columns = [
         {
             title: 'Group Name',
@@ -20,23 +36,34 @@ const FontGroupList = ({ fontGroups }) => {
             key: 'fonts',
             render: (fonts) => (Array.isArray(fonts) ? fonts.join(', ') : fonts),
         },
+        {
+            title: 'Delete',
+            key: 'id',
+            render: (value, record) => (
+                <div className="flex gap-2">
+                <div>
+                    <Button onClick={()=>handleDelete(record?.id)}>
+                        <IoTrashBinOutline className="h-4 w-4 text-red-600" />
+                    </Button>
+                </div>
+                </div>
+            ),
+        },
     ];
 
-    // Format data for Ant Design's Table
-    const dataSource = fontGroups.map((group) => ({
-        key: group?.id,
-        name: group?.name,
-        fonts: group?.fonts,
-    }));
-
     return (
-        <div className="font-group-list">
-            <h3>Font Groups</h3>
-            <Table 
-                columns={columns} 
-                dataSource={dataSource} 
-                pagination={{ pageSize: 5 }}
-                bordered 
+        <div className="text-lg p-2">
+            <h3 className='text-lg font-semibold p-2 border-b'>Font Groups</h3>
+            <AntTable
+                columns={columns}
+                data={fontGroups}
+                isExpand={false}
+                // expandedData={expandedData}
+                isPaginate={true}
+                currentPage={currentPage}
+                handlePageChange={handlePageChange}
+                setLimit={setLimit}
+                setCurrentPage={setCurrentPage}
             />
         </div>
     );

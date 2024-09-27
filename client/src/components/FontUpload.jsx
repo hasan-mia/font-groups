@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Upload, message } from 'antd';
 import { IoCloudUploadOutline } from "react-icons/io5";
+import { useFonts } from '../hooks/useFonts';
 
 const { Dragger } = Upload;
 
-const FontUpload = ({ addFont }) => {
+const FontUpload = () => {
+    const {handleAddFont} = useFonts();
     const [error, setError] = useState('');
 
     const props = {
@@ -18,7 +20,7 @@ const FontUpload = ({ addFont }) => {
 
             if (status === 'done') {
                 if (response && response.message === "File uploaded successfully.") {
-                    handleFont(response.data)
+                    handleAddFont(response.data)
                     message.success(`${info.file.name} file uploaded successfully.`);
                 } else {
                     message.error('File upload failed. Please try again.');
@@ -30,48 +32,18 @@ const FontUpload = ({ addFont }) => {
         },
     };
 
-    const handleFont = async (data) => {
-        const fontData = {
-            name: data.originalFileName,
-            path: data.fileUrl,
-            size: data.fileSize,
-        };
-
-        try {
-            const fontsResponse = await fetch(`${process.env.REACT_APP_API_URL}/fonts`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(fontData),
-            });
-            if (!fontsResponse.ok) {
-                throw new Error('Failed to save font metadata.');
-            }
-
-            const fontsData = await fontsResponse.json();
-
-            // Handle successful response
-            message.success(`Font Add successfully.`);
-            addFont(fontsData.data);
-
-        } catch (error) {
-            message.error(`Error: ${error.message}`);
-            console.error('Error saving font metadata:', error);
-        }
-    };
-
-
     return (
-        <div className="upload-box max-w-lg mx-auto my-6 p-6 border-dashed border-2 border-gray-400 text-center cursor-pointer">
+        <div className='p-2'>
+             <div className="upload-box w-full mx-auto p-4 rounded-sm border-dashed border-2 border-gray-400 text-center cursor-pointer">
             <Dragger {...props} className="bg-white hover:bg-gray-100">
-                <p className="ant-upload-drag-icon">
+                <p className="ant-upload-drag-icon flex justify-center">
                     <IoCloudUploadOutline className="text-gray-600" size={40}/>
                 </p>
                 <p className="text-lg font-semibold">Click or drag file to this area to upload</p>
                 <p className="text-sm">Only .ttf files allowed</p>
             </Dragger>
             {error && <p className="text-red-500 mt-2">{error}</p>}
+        </div>
         </div>
     );
 };
